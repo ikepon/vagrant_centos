@@ -63,9 +63,3 @@
 set_vagrant_user
 
 server '127.0.0.1', user: 'vagrant', roles: %w{app}
-
-task :ls do
-  on roles(:app) do
-    execute "ls"
-  end
-end
