@@ -1,0 +1,13 @@
+---
+- hosts: vagrants
+  sudo: true
+  user: vagrant
+  vars:
+    vagrant_home: "/home/vagrant"
+  tasks:
+    - name: install packages zsh
+      yum: name=zsh update_cache=yes
+
+    - name: install packages git
+      yum: name=git update_cache=yes
+
