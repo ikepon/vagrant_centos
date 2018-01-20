@@ -2,12 +2,75 @@
 - hosts: vagrants
   sudo: true
   user: vagrant
-  vars:
-    vagrant_home: "/home/vagrant"
   tasks:
-    - name: install packages zsh
-      yum: name=zsh update_cache=yes
-
     - name: install packages git
       yum: name=git update_cache=yes
 
+    - name: install packages gcc-c++
+      yum: name=gcc-c++ update_cache=yes
+
+    - name: install packages glibc-headers
+      yum: name=glibc-headers update_cache=yes
+
+    - name: install packages openssl-devel
+      yum: name=openssl-devel update_cache=yes
+
+    - name: install packages readline
+      yum: name=readline update_cache=yes
+
+    - name: install packages libyaml-devel
+      yum: name=libyaml-devel update_cache=yes
+
+    - name: install packages readline-devel
+      yum: name=readline-devel update_cache=yes
+
+    - name: install packages zlib
+      yum: name=zlib update_cache=yes
+
+    - name: install packages zlib-devel
+      yum: name=zlib-devel update_cache=yes
+
+    # http://docs.ansible.com/ansible/latest/git_module.html
+    - git:
+        repo: 'https://github.com/sstephenson/rbenv.git'
+        dest: /usr/local/rbenv
+        version: master
+
+    - git:
+        repo: 'https://github.com/sstephenson/ruby-build.git'
+        dest: /usr/local/rbenv/plugins/ruby-build
+        version: master
+
+- hosts: vagrants
+  name: install ruby via rbenv
+  user: vagrant
+  vars:
+    RBENV_ROOT: /usr/local/rbenv
+    ruby_version: 2.5.0
+  tasks:
+    - name: add rbenv path
+      lineinfile: >
+        dest=/home/vagrant/.bashrc
+        line='RBENV_ROOT="/usr/local/rbenv"'
+        create=yes
+
+    - name: add ruby path
+      lineinfile: >
+        dest=/home/vagrant/.bashrc
+        line='export PATH="${RBENV_ROOT}/bin:/sbin/:${PATH}"'
+        create=yes
+
+    - name: set rbenv's path
+      lineinfile: >
+        dest=/home/vagrant/.bashrc
+        line='eval "$(rbenv init -)"'
+        create=yes
+
+    - name: check ruby installed version
+      shell: bash -lc "rbenv versions"
+
+    - name: install ruby via rbenv
+      shell: bash -lc "rbenv install 2.5.0"
+
+    - name: set global rbenv
+      shell: bash -lc "rbenv global 2.5.0"
